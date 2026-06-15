@@ -9,6 +9,7 @@ const isPlaceholder = (val: string | undefined): boolean => {
   const clean = val.trim().toLowerCase();
   return (
     clean === '' ||
+    clean === 'default' ||
     clean.includes('your_') ||
     clean.includes('placeholder') ||
     clean.includes('project_id')
