@@ -77,7 +77,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/70 p-4 transition-opacity duration-300">
+      <div className="fixed inset-0 z-[99999] overflow-y-auto bg-black/70 p-4 flex justify-center items-start">
         {/* Backdrop overlay */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -87,40 +87,42 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
           className="absolute inset-0 cursor-pointer"
         />
 
-        {/* Modal Window Container - Fixed with maximum max-h, perfect borders in line with manager guidelines */}
+        {/* Modal Window Container - Avoids top clipping, implements custom layout settings with smart auto-scroll */}
         <motion.div
           initial={{ scale: 0.95, opacity: 0, y: 15 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.95, opacity: 0, y: 15 }}
-          className="relative w-full max-w-lg scale-100 transform overflow-y-auto rounded-3xl bg-white p-8 shadow-2xl transition-all duration-300 ease-out max-h-[95vh] border border-gray-100"
+          className="relative w-full max-w-md my-auto md:mt-16 rounded-3xl bg-white p-6 shadow-2xl overflow-hidden max-h-[90vh] flex flex-col border border-gray-100 z-10"
           id="auth-modal-dialog-panel"
         >
           {/* Header Theme Card */}
           <button
             onClick={onClose}
-            className="absolute left-6 top-6 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 transition-all outline-none z-10"
+            className="absolute left-6 top-6 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 transition-all outline-none z-20"
             id="auth-modal-close-btn"
           >
             <X className="h-4.5 w-4.5" />
           </button>
           
-          <div className="text-right mb-6">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-indigo-700">
-              <Sparkles className="h-3 w-3 animate-pulse" />
-              <span>أورا بريفيه (Aura Privé)</span>
-            </span>
-            <h3 className="mt-3 text-2xl font-black tracking-tight text-gray-900">
-              {isSignUp ? 'انضم إلى نخبة أورا بوتيك' : 'مرحباً بعودتك زبوننا العزيز'}
-            </h3>
-            <p className="mt-1.5 text-xs text-gray-500 leading-relaxed">
-              {isSignUp 
-                ? 'أنشئ حساباً مجانياً للوصول الحصري لأحدث تشكيلاتنا ومتابعة طلباتك.'
-                : 'سجل دخولك لتجربة تسوق مكملة بالكامل وحفظ طلباتك بدقه في سيرفراتنا.'}
-            </p>
-          </div>
+          {/* Scrollable Container Content Panel */}
+          <div className="overflow-y-auto pr-1 flex-1 max-h-[75vh] text-right">
+            <div className="mb-6 mt-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-indigo-700">
+                <Sparkles className="h-3 w-3 animate-pulse" />
+                <span>أورا بريفيه (Aura Privé)</span>
+              </span>
+              <h3 className="mt-3 text-2xl font-black tracking-tight text-gray-900">
+                {isSignUp ? 'انضم إلى نخبة أورا بوتيك' : 'مرحباً بعودتك زبوننا العزيز'}
+              </h3>
+              <p className="mt-1.5 text-xs text-gray-500 leading-relaxed">
+                {isSignUp 
+                  ? 'أنشئ حساباً مجانياً للوصول الحصري لأحدث تشكيلاتنا ومتابعة طلباتك.'
+                  : 'سجل دخولك لتجربة تسوق مكملة بالكامل وحفظ طلباتك بدقه في سيرفراتنا.'}
+              </p>
+            </div>
 
-          {/* Form Content body */}
-          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Form Content body */}
+            <form onSubmit={handleSubmit} className="space-y-4">
             {/* Success popup feedback */}
             {successMsg && (
               <motion.div
@@ -295,6 +297,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               </button>
             </div>
           </form>
+          </div>
         </motion.div>
       </div>
     </AnimatePresence>
