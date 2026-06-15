@@ -4,17 +4,32 @@ import { getFirestore, doc, getDocFromServer } from 'firebase/firestore';
 import firebaseConfigDefault from '../../firebase-applet-config.json';
 
 // Support both environment variables and fallback configuration file for maximum security & development convenience
-const config = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || firebaseConfigDefault.apiKey,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || firebaseConfigDefault.authDomain,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || firebaseConfigDefault.projectId,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || firebaseConfigDefault.storageBucket,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || firebaseConfigDefault.messagingSenderId,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || firebaseConfigDefault.appId,
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || firebaseConfigDefault.measurementId,
+const isPlaceholder = (val: string | undefined): boolean => {
+  if (!val) return true;
+  const clean = val.trim().toLowerCase();
+  return (
+    clean === '' ||
+    clean.includes('your_') ||
+    clean.includes('placeholder') ||
+    clean.includes('project_id')
+  );
 };
 
-const firestoreDatabaseId = import.meta.env.VITE_FIREBASE_FIRESTORE_DATABASE_ID || firebaseConfigDefault.firestoreDatabaseId;
+const getValue = (envVal: string | undefined, fallbackVal: string): string => {
+  return isPlaceholder(envVal) ? fallbackVal : envVal!;
+};
+
+const config = {
+  apiKey: getValue(import.meta.env.VITE_FIREBASE_API_KEY, firebaseConfigDefault.apiKey),
+  authDomain: getValue(import.meta.env.VITE_FIREBASE_AUTH_DOMAIN, firebaseConfigDefault.authDomain),
+  projectId: getValue(import.meta.env.VITE_FIREBASE_PROJECT_ID, firebaseConfigDefault.projectId),
+  storageBucket: getValue(import.meta.env.VITE_FIREBASE_STORAGE_BUCKET, firebaseConfigDefault.storageBucket),
+  messagingSenderId: getValue(import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID, firebaseConfigDefault.messagingSenderId),
+  appId: getValue(import.meta.env.VITE_FIREBASE_APP_ID, firebaseConfigDefault.appId),
+  measurementId: getValue(import.meta.env.VITE_FIREBASE_MEASUREMENT_ID, firebaseConfigDefault.measurementId),
+};
+
+const firestoreDatabaseId = getValue(import.meta.env.VITE_FIREBASE_FIRESTORE_DATABASE_ID, firebaseConfigDefault.firestoreDatabaseId);
 
 // Initialize core client Firebase application SDK
 const app = initializeApp(config);
