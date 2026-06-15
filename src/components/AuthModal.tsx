@@ -77,52 +77,50 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 overflow-y-auto">
-        {/* Backdrop overlay blur */}
+      <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/70 p-4 transition-opacity duration-300">
+        {/* Backdrop overlay */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="absolute inset-0 bg-gray-950/60 backdrop-blur-sm"
+          className="absolute inset-0 cursor-pointer"
         />
 
-        {/* Modal Window Container */}
+        {/* Modal Window Container - Fixed with maximum max-h, perfect borders in line with manager guidelines */}
         <motion.div
           initial={{ scale: 0.95, opacity: 0, y: 15 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.95, opacity: 0, y: 15 }}
-          className="relative w-full max-w-md max-h-[90vh] overflow-y-auto rounded-3xl bg-white shadow-2xl border border-gray-100/30"
+          className="relative w-full max-w-lg scale-100 transform overflow-y-auto rounded-3xl bg-white p-8 shadow-2xl transition-all duration-300 ease-out max-h-[95vh] border border-gray-100"
           id="auth-modal-dialog-panel"
         >
           {/* Header Theme Card */}
-          <div className="bg-gray-950 px-6 py-8 text-white relative">
-            <button
-              onClick={onClose}
-              className="absolute left-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-all outline-none"
-              id="auth-modal-close-btn"
-            >
-              <X className="h-4.5 w-4.5" />
-            </button>
-            
-            <div className="text-right">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-indigo-300">
-                <Sparkles className="h-3 w-3" />
-                <span>أورا بريفيه (Aura Privé)</span>
-              </span>
-              <h3 className="mt-3.5 text-xl font-black tracking-tight">
-                {isSignUp ? 'انضم إلى نخبة أورا بوتيك' : 'مرحباً بعودتك زبوننا العزيز'}
-              </h3>
-              <p className="mt-1 text-xs text-gray-400">
-                {isSignUp 
-                  ? 'أنشئ حساباً مجانياً للوصول الحصري لأحدث تشكيلاتنا ومتابعة طلباتك.'
-                  : 'سجل دخولك لتجربة تسوق مكملة بالكامل وحفظ طلباتك بدقه في سيرفراتنا.'}
-              </p>
-            </div>
+          <button
+            onClick={onClose}
+            className="absolute left-6 top-6 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 transition-all outline-none z-10"
+            id="auth-modal-close-btn"
+          >
+            <X className="h-4.5 w-4.5" />
+          </button>
+          
+          <div className="text-right mb-6">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-indigo-700">
+              <Sparkles className="h-3 w-3 animate-pulse" />
+              <span>أورا بريفيه (Aura Privé)</span>
+            </span>
+            <h3 className="mt-3 text-2xl font-black tracking-tight text-gray-900">
+              {isSignUp ? 'انضم إلى نخبة أورا بوتيك' : 'مرحباً بعودتك زبوننا العزيز'}
+            </h3>
+            <p className="mt-1.5 text-xs text-gray-500 leading-relaxed">
+              {isSignUp 
+                ? 'أنشئ حساباً مجانياً للوصول الحصري لأحدث تشكيلاتنا ومتابعة طلباتك.'
+                : 'سجل دخولك لتجربة تسوق مكملة بالكامل وحفظ طلباتك بدقه في سيرفراتنا.'}
+            </p>
           </div>
 
           {/* Form Content body */}
-          <form onSubmit={handleSubmit} className="p-6.5 space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             {/* Success popup feedback */}
             {successMsg && (
               <motion.div
