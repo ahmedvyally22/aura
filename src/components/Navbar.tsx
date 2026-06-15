@@ -184,16 +184,7 @@ export default function Navbar({
                    خروج
                 </button>
               </div>
-            ) : (
-              <button
-                onClick={() => setIsAuthOpen(true)}
-                className="flex h-10 items-center justify-center gap-1.5 rounded-xl bg-gray-950 px-4 py-2 text-xs font-bold text-white hover:bg-indigo-600 transition-colors cursor-pointer shadow-sm"
-                id="navbar-login-btn"
-              >
-                <User className="h-3.5 w-3.5" />
-                <span>دخول / تسجيل</span>
-              </button>
-            )}
+            ) : null}
           </div>
 
           {/* Basket Cart Count Trigger */}
@@ -352,19 +343,7 @@ export default function Navbar({
                       تسجيل الخروج من الحساب
                     </button>
                   </div>
-                ) : (
-                  <button
-                    onClick={() => {
-                      setIsAuthOpen(true);
-                      setMobileMenuOpen(false);
-                    }}
-                    className="w-full rounded-xl bg-gray-950 py-2.5 text-xs font-bold text-white hover:bg-indigo-600 transition-colors flex items-center justify-center gap-1.5"
-                    id="mobile-login-btn"
-                  >
-                    <User className="h-4 w-4" />
-                    <span>تسجيل الدخول / إنشاء حساب</span>
-                  </button>
-                )}
+                ) : null}
               </div>
             </div>
           </motion.div>

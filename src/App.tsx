@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CartProvider } from './context/CartContext';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import ProductGrid from './components/ProductGrid';
@@ -22,13 +22,34 @@ function MainAppLayout() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
 
+  const { user } = useAuth();
+
+  useEffect(() => {
+    const isUrlAdminPanel = window.location.pathname === '/admin-panel';
+    const urlParams = new URLSearchParams(window.location.search);
+    const hasAccessAdmin = urlParams.get('access') === 'admin';
+    
+    if (isUrlAdminPanel || hasAccessAdmin) {
+      setView('admin');
+    }
+  }, [user]);
+
   const scrollToBrowseGrid = () => {
     const el = document.getElementById('featured-grid-anchor');
     el?.scrollIntoView({ behavior: 'smooth' });
   };
 
   if (view === 'admin') {
-    return <AdminDashboard onClose={() => setView('shop')} />;
+    return (
+      <AdminDashboard
+        onClose={() => {
+          if (window.location.pathname === '/admin-panel') {
+            window.history.replaceState({}, document.title, '/');
+          }
+          setView('shop');
+        }}
+      />
+    );
   }
 
   return (

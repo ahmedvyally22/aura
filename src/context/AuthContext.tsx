@@ -29,8 +29,45 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Monitor Auth state changes
   useEffect(() => {
+    // 1. Check if there is an active local admin bypass session
+    const localAdmin = localStorage.getItem('aura_admin_bypass');
+    if (localAdmin) {
+      try {
+        setUser(JSON.parse(localAdmin));
+        setLoading(false);
+        return;
+      } catch (e) {
+        localStorage.removeItem('aura_admin_bypass');
+      }
+    }
+
+    // 2. Check URL triggers for secret bypass (?access=admin or /admin-panel)
+    const urlParams = new URLSearchParams(window.location.search);
+    const hasAccessAdmin = urlParams.get('access') === 'admin';
+    const isUrlAdminPanel = window.location.pathname === '/admin-panel';
+
+    if (hasAccessAdmin || isUrlAdminPanel) {
+      const mockAdmin = {
+        uid: 'secret-admin-bypass',
+        email: 'ahmedvyally22@gmail.com',
+        displayName: 'المدير أحمد Vyally',
+        photoURL: 'https://api.dicebear.com/7.x/initials/svg?seed=AhmedVyally'
+      };
+      localStorage.setItem('aura_admin_bypass', JSON.stringify(mockAdmin));
+      setUser(mockAdmin as any);
+      setLoading(false);
+
+      if (hasAccessAdmin) {
+        // Clean up the URL query parameters so the URL stays neat
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+      if (!localStorage.getItem('aura_admin_bypass')) {
+        setUser(currentUser);
+      }
       setLoading(false);
     });
     return unsubscribe;
@@ -59,7 +96,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = async () => {
+    localStorage.removeItem('aura_admin_bypass');
     await signOut(auth);
+    setUser(null);
   };
 
   const getInitials = () => {
