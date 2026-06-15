@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Mail, Lock, User, Sparkles, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -67,6 +68,8 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         setErrorMsg('البريد الإلكتروني أو كلمة المرور غير صحيحة.');
       } else if (err.code === 'auth/email-already-in-use') {
         setErrorMsg('هذا البريد الإلكتروني مسجل بالفعل لصالح مستخدم آخر.');
+      } else if (err.code === 'auth/operation-not-allowed') {
+        setErrorMsg('طريقة التسجيل بالبريد الإلكتروني مغلَقة حالياً في لوحة تحكم Firebase للمشروع. يرجى تفعيل "Email/Password" في لوحة تحكّم Authentication أو استخدام تسجيل الدخول السريع عبر Google.');
       } else {
         setErrorMsg(err.message || 'حدث خطأ غير متوقع أثناء التصديق.');
       }
@@ -75,7 +78,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     }
   };
 
-  return (
+  return createPortal(
     <AnimatePresence>
       <div className="fixed inset-0 !z-[999999] overflow-y-auto bg-black/80 p-4 flex justify-center items-start backdrop-blur-sm">
         {/* Backdrop overlay */}
@@ -300,6 +303,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
           </div>
         </motion.div>
       </div>
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }
