@@ -130,26 +130,36 @@ export default function AdminDashboard({ onClose }: AdminDashboardProps) {
     setLoading(true);
     setError(null);
     try {
-      const [fetchedOrders, fetchedProducts] = await Promise.all([
-        getOrdersFromDB(),
-        getProductsFromDB(),
-      ]);
+      // 1. Fetch live products from DB (does not require auth)
+      try {
+        const fetchedProducts = await getProductsFromDB();
+        setProducts(fetchedProducts || []);
+      } catch (prodErr: any) {
+        console.error("Dashboard products list loading error:", prodErr);
+        setError("حدث خطأ أثناء تحميل قائمة المنتجات من قاعدة البيانات.");
+      }
 
-      setOrders(fetchedOrders);
-      setProducts(fetchedProducts);
+      // 2. Fetch orders from DB (requires auth, so we fail gracefully for bypass access)
+      try {
+        const fetchedOrders = await getOrdersFromDB();
+        setOrders(fetchedOrders || []);
 
-      // Analyze statistics
-      const totalSales = fetchedOrders.reduce((sum, order) => sum + order.total, 0);
-      const uniqueEmails = new Set(fetchedOrders.map(order => order.userEmail).filter(Boolean));
-      
-      setStats({
-        totalSales,
-        ordersCount: fetchedOrders.length,
-        uniqueUsersCount: uniqueEmails.size || 1,
-      });
+        // Analyze statistics
+        const totalSales = (fetchedOrders || []).reduce((sum, order) => sum + order.total, 0);
+        const uniqueEmails = new Set((fetchedOrders || []).map(order => order.userEmail).filter(Boolean));
+        
+        setStats({
+          totalSales,
+          ordersCount: (fetchedOrders || []).length,
+          uniqueUsersCount: uniqueEmails.size || 1,
+        });
+      } catch (ordErr: any) {
+        console.error("Dashboard orders loading error:", ordErr);
+        // Do not block products loading if orders fetch fails (e.g. mock/bypass unauthenticated access)
+      }
     } catch (err: any) {
       console.error("Dashboard listing error:", err);
-      setError("حدث خطأ أثناء تحميل بيانات الإحصائيات من قاعدة البيانات.");
+      setError("حدث خطأ غير متوقع أثناء معالجة بيانات لوحة التحكم.");
     } finally {
       setLoading(false);
     }
