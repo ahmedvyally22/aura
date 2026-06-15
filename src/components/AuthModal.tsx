@@ -77,7 +77,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[99999] overflow-y-auto bg-black/70 p-4 flex justify-center items-start">
+      <div className="fixed inset-0 !z-[999999] overflow-y-auto bg-black/80 p-4 flex justify-center items-start backdrop-blur-sm">
         {/* Backdrop overlay */}
         <motion.div
           initial={{ opacity: 0 }}
