@@ -77,7 +77,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 overflow-y-auto">
         {/* Backdrop overlay blur */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -92,7 +92,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
           initial={{ scale: 0.95, opacity: 0, y: 15 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.95, opacity: 0, y: 15 }}
-          className="relative w-full max-w-md overflow-hidden rounded-3xl bg-white shadow-2xl border border-gray-100/30"
+          className="relative w-full max-w-md max-h-[90vh] overflow-y-auto rounded-3xl bg-white shadow-2xl border border-gray-100/30"
           id="auth-modal-dialog-panel"
         >
           {/* Header Theme Card */}
