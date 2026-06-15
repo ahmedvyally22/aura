@@ -1,0 +1,56 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "A luxury item available in Aura Boutique",
+      "type": "object",
+      "properties": {
+        "id": { "type": "integer" },
+        "name": { "type": "string" },
+        "price": { "type": "number" },
+        "description": { "type": "string" },
+        "category": { "type": "string" },
+        "rating": {
+          "type": "object",
+          "properties": {
+            "rate": { "type": "number" },
+            "count": { "type": "integer" }
+          },
+          "required": ["rate", "count"]
+        },
+        "image": { "type": "string", "format": "uri" },
+        "featured": { "type": "boolean" },
+        "stock": { "type": "integer" }
+      },
+      "required": ["id", "name", "price", "description", "category", "rating", "image", "featured", "stock"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "A completed checkout order placed by a customer",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userEmail": { "type": "string" },
+        "customerName": { "type": "string" },
+        "items": {
+          "type": "array",
+          "description": "The cart items ordered by the buyer"
+        },
+        "total": { "type": "number" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "userEmail", "customerName", "items", "total", "status", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Luxury boutique products in store catalog"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Store customer order transaction records"
+    }
+  }
+}

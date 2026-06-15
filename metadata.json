@@ -1,0 +1,6 @@
+{
+  "name": "Aura Boutique",
+  "description": "A premium, luxury Arabic fashion e-commerce boutique (Aura Boutique) featuring high-end dress collections, interactive shopping, live AI stylist chat assistance, dynamic admin inventory insights, and smooth checkout integrations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

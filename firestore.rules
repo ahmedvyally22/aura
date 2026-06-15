@@ -1,0 +1,80 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Global safety net catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (request.auth.token.email == "ahmedvyally22@gmail.com" || request.auth.token.email == "admin@aura.com");
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Validate Product Schema
+    function isValidProduct(data) {
+      return data.id is int
+        && data.name is string && data.name.size() > 0 && data.name.size() <= 200
+        && (data.price is float || data.price is int) && data.price >= 0
+        && data.description is string && data.description.size() <= 1000
+        && data.category is string && data.category.size() <= 100
+        && data.image is string
+        && data.featured is bool
+        && data.stock is int && data.stock >= 0
+        && data.rating is map
+        && (data.rating.rate is float || data.rating.rate is int)
+        && data.rating.count is int;
+    }
+
+    // Validate Order Schema
+    function isValidOrder(data) {
+      return data.id is string && data.id.size() <= 128
+        && data.userEmail is string && data.userEmail.size() <= 128
+        && data.customerName is string && data.customerName.size() <= 128
+        && (data.total is float || data.total is int) && data.total >= 0
+        && data.status is string && data.status.size() <= 50
+        && data.items is list
+        && data.createdAt is timestamp
+        && (!("paymentMethod" in data) || (data.paymentMethod is string && data.paymentMethod.size() <= 50));
+    }
+
+    // MATCH BLOCK: Products Collection
+    match /products/{productId} {
+      allow get, list: if true;
+      allow create, update: if (isAdmin() || (isSignedIn() && request.auth.token.email == "ahmedvyally22@gmail.com"))
+        && isValidId(productId)
+        && isValidProduct(incoming());
+      allow delete: if isAdmin() || (isSignedIn() && request.auth.token.email == "ahmedvyally22@gmail.com");
+    }
+
+    // MATCH BLOCK: Orders Collection
+    match /orders/{orderId} {
+      allow create: if isValidId(orderId)
+        && isValidOrder(incoming())
+        && (isSignedIn() ? incoming().userEmail == request.auth.token.email : true)
+        && incoming().createdAt == request.time;
+
+      allow get, list: if isSignedIn()
+        && (resource.data.userEmail == request.auth.token.email || request.auth.token.email == "ahmedvyally22@gmail.com" || request.auth.token.email == "admin@aura.com");
+
+      allow update, delete: if false;
+    }
+  }
+}
